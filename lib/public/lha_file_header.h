@@ -131,6 +131,14 @@ extern "C" {
 #define LHA_FILE_FAKE_NAME             0x40
 
 /**
+ * Bit field value set in extra_flags to indicate that the LArc 7 level
+ * field was found where the CRC-16 field normally is.  LArc 7 stores
+ * the parameters of the compression algorithm in this field, and does
+ * not store a CRC-16 for the methods that use it.
+ */
+#define LHA_FILE_LARC7_LEVEL           0x80
+
+/**
  * Macro that evaluates to true if the specified flag is set in the
  * given @ref LHAFileHeader.
  */

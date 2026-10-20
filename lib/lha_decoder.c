@@ -51,6 +51,7 @@ static const struct {
 } decoders[] = {
 	{ "-lz4-", &lha_null_decoder },
 	{ "-lz5-", &lha_lz5_decoder },
+	{ "-lz8-", &lha_lz5_decoder },
 	{ "-lzs-", &lha_lzs_decoder },
 	{ "-lh0-", &lha_null_decoder },
 	{ "-lh1-", &lha_lh1_decoder },

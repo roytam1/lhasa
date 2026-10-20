@@ -104,9 +104,11 @@ static int file_header_match(uint8_t *buf)
 	}
 
 	// LArc algorithm (lz4, lz5, lzs)?
+	// LArc 7 also uses the -lz8- method ID.
 
 	if (buf[3] == 'l' && buf[4] == 'z'
-	 && (buf[5] == '4' || buf[5] == '5' || buf[5] == 's')) {
+	 && (buf[5] == '4' || buf[5] == '5' || buf[5] == '8'
+	  || buf[5] == 's')) {
 		return 1;
 	}
 

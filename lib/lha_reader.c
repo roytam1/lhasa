@@ -396,11 +396,15 @@ static int do_decode(LHAReader *reader, FILE *output)
 
 	// Decoder stores output position and performs running CRC.
 	// At the end of the stream these should match the header values.
+	//
+	// LArc 7 does not store a CRC-16 for the methods that use the
+	// LArc 7 level field, so there is nothing to check in that case.
 
 	return lha_decoder_get_length(reader->inner_decoder)
 	         == reader->curr_file->length
-	    && lha_decoder_get_crc(reader->inner_decoder)
-	         == reader->curr_file->crc;
+	    && (LHA_FILE_HAVE_EXTRA(reader->curr_file, LHA_FILE_LARC7_LEVEL)
+	        || lha_decoder_get_crc(reader->inner_decoder)
+	         == reader->curr_file->crc);
 }
 
 int lha_reader_check(LHAReader *reader,

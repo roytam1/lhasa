@@ -305,6 +305,18 @@ static int parse_symlink(LHAFileHeader *header)
 	return split_header_filename(header);
 }
 
+// Does the given compression method use the LArc 7 level field?
+//
+// LArc 7 stores a two byte level field directly after the file name for
+// some of its methods, in the place where the CRC-16 field normally is.
+// The field holds the parameters of the compression algorithm, and LArc
+// 7 does not store a CRC-16 for these methods.
+
+static int uses_larc7_level_field(const char *method)
+{
+	return !strcmp(method, "-lz8-");
+}
+
 // Decode the path field in the header.
 
 static int process_level0_path(LHAFileHeader *header, uint8_t *data,
@@ -683,6 +695,14 @@ static int decode_level0_header(LHAFileHeader **header, LHAInputStream *stream)
 	// CRC field.
 
 	(*header)->crc = lha_decode_uint16(&RAW_DATA(header, 22 + path_len));
+
+	// LArc 7 stores a level field in place of the CRC-16 for some of
+	// its methods, and does not store a CRC-16 for them.
+
+	if (uses_larc7_level_field((*header)->compress_method)) {
+		(*header)->crc = 0;
+		(*header)->extra_flags |= LHA_FILE_LARC7_LEVEL;
+	}
 
 	// Level 0 headers can contain extended data through different schemes
 	// to the extended header system used in level 1+.
