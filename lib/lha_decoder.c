@@ -52,6 +52,9 @@ static const struct {
 	{ "-lz4-", &lha_null_decoder },
 	{ "-lz5-", &lha_lz5_decoder },
 	{ "-lz8-", &lha_lz5_decoder },
+	{ "-lz1-", &lha_lzs_decoder },
+	{ "-lz2-", &lha_lzs_decoder },
+	{ "-lz3-", &lha_lzs_decoder },
 	{ "-lzs-", &lha_lzs_decoder },
 	{ "-lh0-", &lha_null_decoder },
 	{ "-lh1-", &lha_lh1_decoder },
@@ -121,6 +124,23 @@ LHADecoder *lha_decoder_new(const LHADecoderType *dtype,
 {
 	return lha_decoder_new64(dtype, callback, callback_data,
 	                         stream_length);
+}
+
+// Set the number of bits used for the position and the length of a copy
+// operation by the LZSS decoder.  This must be called before any data is
+// read.  Returns non-zero for success.
+
+int lha_decoder_set_lzs_params(LHADecoder *decoder,
+                               unsigned int pos_bits,
+                               unsigned int len_bits)
+{
+	if (decoder->dtype != &lha_lzs_decoder) {
+		return 0;
+	}
+
+	// The private data area follows the structure.
+
+	return lha_lzs_decoder_set_params(decoder + 1, pos_bits, len_bits);
 }
 
 const LHADecoderType *lha_decoder_for_name(const char *name)

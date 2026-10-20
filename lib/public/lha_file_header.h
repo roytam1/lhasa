@@ -139,6 +139,14 @@ extern "C" {
 #define LHA_FILE_LARC7_LEVEL           0x80
 
 /**
+ * Bit field value set in extra_flags to indicate that the LArc 7 level
+ * field contains the parameters of the bit oriented LZSS algorithm, and
+ * that the @ref LHAFileHeader.lzss_pos_bits and
+ * @ref LHAFileHeader.lzss_len_bits fields are valid.
+ */
+#define LHA_FILE_LZSS_PARAMS           0x100
+
+/**
  * Macro that evaluates to true if the specified flag is set in the
  * given @ref LHAFileHeader.
  */
@@ -272,6 +280,20 @@ typedef struct _LHAFileHeader {
 
 	/** Length of the uncompressed data. */
 	uint64_t length;
+
+	/**
+	 * Number of bits used for the position of a copy operation, by
+	 * the LArc 7 methods that use the bit oriented LZSS algorithm.
+	 * Only valid if @ref LHA_FILE_LARC7_LEVEL is set.
+	 */
+	uint8_t lzss_pos_bits;
+
+	/**
+	 * Number of bits used for the length of a copy operation, by
+	 * the LArc 7 methods that use the bit oriented LZSS algorithm.
+	 * Only valid if @ref LHA_FILE_LARC7_LEVEL is set.
+	 */
+	uint8_t lzss_len_bits;
 
 } LHAFileHeader;
 

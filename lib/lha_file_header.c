@@ -314,7 +314,17 @@ static int parse_symlink(LHAFileHeader *header)
 
 static int uses_larc7_level_field(const char *method)
 {
-	return !strcmp(method, "-lz8-");
+	return !strcmp(method, "-lz1-") || !strcmp(method, "-lz2-")
+	    || !strcmp(method, "-lz3-") || !strcmp(method, "-lz8-");
+}
+
+// Does the given compression method use the bit oriented LZSS algorithm,
+// whose parameters are stored in the LArc 7 level field?
+
+static int uses_larc7_lzss_params(const char *method)
+{
+	return !strcmp(method, "-lz1-") || !strcmp(method, "-lz2-")
+	    || !strcmp(method, "-lz3-");
 }
 
 // Decode the path field in the header.
@@ -699,9 +709,22 @@ static int decode_level0_header(LHAFileHeader **header, LHAInputStream *stream)
 	// LArc 7 stores a level field in place of the CRC-16 for some of
 	// its methods, and does not store a CRC-16 for them.
 
-	if (uses_larc7_level_field((*header)->compress_method)) {
+	if ((*header)->header_level == 0
+	 && uses_larc7_level_field((*header)->compress_method)) {
 		(*header)->crc = 0;
 		(*header)->extra_flags |= LHA_FILE_LARC7_LEVEL;
+
+		// The methods that use the bit oriented LZSS algorithm store
+		// the number of bits used for the position and the length of
+		// a copy operation in the level field.
+
+		if (uses_larc7_lzss_params((*header)->compress_method)) {
+			(*header)->extra_flags |= LHA_FILE_LZSS_PARAMS;
+			(*header)->lzss_pos_bits = RAW_DATA(header,
+			                                    22 + path_len);
+			(*header)->lzss_len_bits = RAW_DATA(header,
+			                                    23 + path_len);
+		}
 	}
 
 	// Level 0 headers can contain extended data through different schemes

@@ -114,4 +114,23 @@ struct _LHADecoder {
 	uint16_t crc;
 };
 
+/**
+ * Set the number of bits used for the position and the length of a copy
+ * operation by the LZSS decoder.  This must be called before any data is
+ * read.  Returns non-zero for success.
+ */
+
+int lha_lzs_decoder_set_params(void *extra_data, unsigned int pos_bits,
+                               unsigned int len_bits);
+
+/**
+ * Set the number of bits used for the position and the length of a copy
+ * operation by the LZSS decoder used for the current file.  This must be
+ * called before any data is read.  Returns non-zero for success.
+ */
+
+int lha_decoder_set_lzs_params(LHADecoder *decoder,
+                               unsigned int pos_bits,
+                               unsigned int len_bits);
+
 #endif /* #ifndef LHASA_LHA_DECODER_H */

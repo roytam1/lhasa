@@ -138,6 +138,7 @@ static size_t decoder_callback(void *buf, size_t buf_len, void *user_data)
 LHADecoder *lha_basic_reader_decode(LHABasicReader *reader)
 {
 	const LHADecoderType *dtype;
+	LHADecoder *decoder;
 
 	if (reader->curr_file == NULL) {
 		return NULL;
@@ -153,6 +154,23 @@ LHADecoder *lha_basic_reader_decode(LHABasicReader *reader)
 
 	// Create decoder.
 
-	return lha_decoder_new(dtype, decoder_callback, reader,
-	                       reader->curr_file->length);
+	decoder = lha_decoder_new(dtype, decoder_callback, reader,
+	                           reader->curr_file->length);
+
+	if (decoder == NULL) {
+		return NULL;
+	}
+
+	// The LArc 7 methods that use the bit oriented LZSS algorithm store
+	// the parameters of the algorithm in the header.
+
+	if (LHA_FILE_HAVE_EXTRA(reader->curr_file, LHA_FILE_LZSS_PARAMS)
+	 && !lha_decoder_set_lzs_params(decoder,
+	                                reader->curr_file->lzss_pos_bits,
+	                                reader->curr_file->lzss_len_bits)) {
+		lha_decoder_free(decoder);
+		return NULL;
+	}
+
+	return decoder;
 }

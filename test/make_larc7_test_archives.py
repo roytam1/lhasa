@@ -100,7 +100,7 @@ def encode_lz5(data):
 			if best_len >= 3:
 				commands.append((best_pos, best_len))
 				for k in range(best_len):
-					history[pos] = history[(best_pos + k) & 4095]
+					history[pos] = data[i + k]
 					valid[pos] = 1
 					pos = (pos + 1) & 4095
 				i += best_len
@@ -140,7 +140,7 @@ def encode_lzs(data, pos_bits, len_bits):
 	while i < len(data):
 		best_len = 0
 		best_pos = 0
-		limit = min((1 << len_bits) - 1 + ce2 + 1, len(data) - i)
+		limit = min((1 << len_bits) - 1 + ce2 + 1, 17, len(data) - i)
 		for dist in range(1, window):
 			start = (pos - dist) & mask
 			if not valid[start] or history[start] != data[i]:
@@ -165,7 +165,7 @@ def encode_lzs(data, pos_bits, len_bits):
 			for n in range(len_bits - 1, -1, -1):
 				bits.append((best_len - ce2 - 1) >> n & 1)
 			for k in range(best_len):
-				history[pos] = history[(best_pos + k) & mask]
+				history[pos] = data[i + k]
 				valid[pos] = 1
 				pos = (pos + 1) & mask
 			i += best_len
@@ -179,9 +179,12 @@ def encode_lzs(data, pos_bits, len_bits):
 			i += 1
 	out = bytearray()
 	for i in range(0, len(bits), 8):
+		group = bits[i:i + 8]
 		byte = 0
-		for bit in bits[i:i + 8]:
+		for bit in group:
 			byte = (byte << 1) | bit
+		# The bits of the last byte are at the top of the byte.
+		byte <<= 8 - len(group)
 		out.append(byte)
 	return bytes(out)
 

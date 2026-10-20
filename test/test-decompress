@@ -60,6 +60,9 @@ hello_world3="0d4a1185 11"
 # LArc 7 compression methods:
 
 larc7_lz8="76b67742 79"
+larc7_lz1="76b67742 79"
+larc7_lz2="76b67742 79"
+larc7_lz3="76b67742 79"
 
 test_archive explzh_723/h0_lh0.lzh              $gpl2_gz
 test_archive explzh_723/h0_lh5.lzh              $gpl2
@@ -85,6 +88,9 @@ test_archive larc333/sfx.com                    $gpl2_gz
 test_archive larc333/subdir.lzs                 $hello_world1
 test_archive larc333/long.lzs                   $long
 test_archive larc333/lz8.lzs                    $larc7_lz8
+test_archive larc333/lz1.lzs                    $larc7_lz1
+test_archive larc333/lz2.lzs                    $larc7_lz2
+test_archive larc333/lz3.lzs                    $larc7_lz3
 
 test_archive lharc113/lh0.lzh                   $gpl2_gz
 test_archive lharc113/lh1.lzh                   $gpl2
