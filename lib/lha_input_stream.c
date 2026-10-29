@@ -103,6 +103,12 @@ static int file_header_match(uint8_t *buf)
 		return 1;
 	}
 
+	// UNLHA32 experimental -lx1- algorithm:
+
+	if (buf[3] == 'l' && buf[4] == 'x' && buf[5] == '1') {
+		return 1;
+	}
+
 	// LArc algorithm (lz4, lz5, lzs)?
 
 	if (buf[3] == 'l' && buf[4] == 'z'

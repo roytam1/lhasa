@@ -10,7 +10,6 @@ Library:
     * Microsoft LZH folder add-in for Windows (if possible?)
  * Decompressors for obscure algorithms:
     * -lh2-, -lh3- (experimental LHA?)
-    * -lx1- (unlha32 obscure/experimental?)
 
 Command line tool:
  * Create/update/modify archives.
